@@ -74,3 +74,81 @@ const blackberry = {
 console.log(blackberry);
 console.log(blackberry.variety);
 console.log(blackberry.price, blackberry.locations);
+console.log(blackberry.locations[1]);
+// You can also add properties
+blackberry.size = "small";
+console.log(blackberry.size);
+
+
+// ARRAYS
+const todos = [
+    {
+        id: 1,
+        text: "Eat fries",
+        isCompleted: true
+    }, 
+    {
+        id: 2,
+        text: "Hike Everest",
+        isCompleted: false
+    },
+    {
+        id: 3,
+        text: "Yawn",
+        isCompleted: false
+    }
+];
+console.log(todos);
+console.log(todos[1].text);
+
+
+// JSON: How we would send data to a server
+const todoJSON = JSON.stringify(todos);
+console.log(todoJSON);
+
+
+// LOOPS
+// For
+for(let i = 0; i < 10; i++) {
+     console.log(i);
+     console.log(`For loop number: ${i}`);
+}
+// While
+let i = 0;
+while (i < 10) {
+    console.log(i);
+    i++;
+}
+// Iterating through array: classic
+for(let i = 0; i < todos.length; i++) {
+    console.log(i);
+    console.log("To do: " + todos[i].text);
+}
+// Iterating through array: todo
+for(let todo of todos) {
+    console.log(todo.text);
+}
+
+
+// HIGH-ORDER ARRAY FUNCTIONS
+// For-each
+todos.forEach(function(todo) {
+    console.log(todo.text);
+});
+// Map - returns an array
+const todoText = todos.map(function(todo) {
+    return todo.text;
+});
+console.log(todoText);
+// Filter - also returns an array
+const todoCompleted = todos.filter(function(todo) {
+    return todo.isCompleted === true;
+});
+console.log(todoCompleted);
+// Filter + map
+const todoCompletedFM = todos.filter(function(todo) {
+    return todo.isCompleted === true;
+}).map(function(todo) {
+    return todo.text;
+});
+console.log(todoCompletedFM);
