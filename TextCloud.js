@@ -3,19 +3,15 @@
 // https://stackoverflow.com/questions/4328500/how-can-i-strip-all-punctuation-from-a-string-in-javascript-using-regex/4328546
 // https://stackoverflow.com/questions/22921242/remove-carriage-return-and-space-from-a-string
 
-// 1. Read in exclude file. Store excluded words
-// 2. Read in input file. Lowercase all words, clean the words, and remove single-letter "words." Exclude excluded words. We need a key-value pair as well.
-// 3. Sort words by value - aka, sort from most frequent -> least frequent.
-// 4. Get top 50 of the most common, AND their values.
-// 5. Alphabetize the top 50.
-// 6. Get size range value: most common value - 50th most common value. 
-// 7. Get size factor: 1000 / range.
-// 8. Write to HTML. Font size = word count * size factor. Use randomized colors.
-
-// TO DO: Output HTML
-
 const inputFileName = process.argv[2];
 const excludeFileName = process.argv[3];
+const outputFileName = process.argv[4];
+
+if(process.argv.length != 5) {
+    console.log("Please run program like <text file name> <exclude file name> <output file name>\n");
+    process.exit();
+}
+
 const fs = require('fs');
 var exclArray = fs.readFileSync(excludeFileName).toString().split("\n").map(word => word.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, ' '));
 
@@ -25,7 +21,11 @@ fs.readFile(inputFileName, 'utf8', function(err, data) {
     var wordsMap = {};
     splitWordsArray.forEach(function (key) {
         if(wordsMap.hasOwnProperty(key) && key.length > 1 && !exclArray.includes(key)) {
-            wordsMap[key]++; 
+            if(!exclArray.includes(key)) {
+                wordsMap[key]++;
+            } else if(exclArray.includes(key)) {
+
+            }
         } else {
             wordsMap[key] = 1;
         }
@@ -44,6 +44,19 @@ fs.readFile(inputFileName, 'utf8', function(err, data) {
     }
     // Get size range
     var sizeRange = top50[0][1] - top50[49][1];
+    // Get size factor
+    var sizeFactor = 1000.0 / sizeRange;
     // Alphabetize top50
     var alphabetical50 = new Map([...top50Map.entries()].sort());
+    // Write to HTML file
+    var writeStream = fs.createWriteStream(outputFileName);
+    writeStream.write("<!DOCTYPE html><html><body>\n");
+    for(let [key, value] of alphabetical50) {
+        let r = Math.random() * (255 - 1) + 1;
+        let g = Math.random() * (255 - 0) + 1;
+        let b = Math.random() * (255 - 0) + 1;
+        writeStream.write("<span style = \"font-size:" + value * sizeFactor + "%; color: rgb(" + r + ", " + g + ", " + b + ")\">" + key + "</span>\n");
+    }
+    writeStream.write("</body></html>");
+    writeStream.end();
 });
